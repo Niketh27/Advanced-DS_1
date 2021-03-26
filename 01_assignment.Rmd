@@ -10,7 +10,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-#knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```
 
 ```{r libraries}
@@ -41,13 +41,15 @@ You'll be using RStudio to create a personal website to showcase your work from 
 
 Once you've chosen that, you might want to look through some of the other *Building a website* resources I posted on the [resources page](https://advanced-ds-in-r.netlify.app/resources.html) of our course website. I highly recommend making a nice landing page where you give a brief introduction of yourself. 
 
-https://dazzling-allen-5430e2.netlify.app/ (Want to make a blogdown site but made this for now)
-
 **Tasks**:
 
 * Include a link to your website below. (If anyone does not want to post a website publicly, please talk to me and we will find a different solution).  
 
+https://dazzling-allen-5430e2.netlify.app/(Want to make a blogdown site but made this for now)
+
 * Listen to at least the first 20 minutes of "Building a Career in Data Science, Chapter 4: Building a Portfolio". Go to the main [podcast website](https://podcast.bestbook.cool/) and navigate to a podcast provider that works for you to find that specific episode. Write 2-3 sentences reflecting on what they discussed and why creating a website might be helpful for you.  
+
+It's a good way to display your work, especially when interviewing and it helps organize your work for yourself. 
 
 * (Optional) Create an R package with your own customized `gpplot2` theme! Write a post on your website about why you made the choices you did for the theme. See the *Building an R package* and *Custom `ggplot2` themes* [resources](https://advanced-ds-in-r.netlify.app/resources.html). 
 
@@ -84,7 +86,7 @@ hotels %>%
   summarise( tot_cancel = sum(is_canceled), tot_books = n() ) %>% 
   mutate(perc_cancel = tot_cancel/tot_books)
 ```
-The hell?
+what?
 
 ```{r }
 #previous_cancellations vs is_canceled
@@ -157,9 +159,9 @@ hotels_recipe <- hotels_recipe %>%
               previous_cancellations, fn = as.factor(previous_cancellations> 0)) %>% 
   step_mutate(agent = as.numeric(agent == "NULL"),
               company = as.numeric(company == "NULL")) %>% 
-  step_mutate(country = fct_lump_n(f = (country),5)) %>% #not sure about using step_mutate, did step_other
+  step_mutate(country = fct_lump_n(f = (country),5)) %>% 
   step_normalize(all_predictors(), 
-                 -all_nominal()) %>% #does this work?
+                 -all_nominal()) %>% 
   step_dummy(all_nominal(),-all_outcomes())
 ```
 
@@ -320,19 +322,24 @@ preds%>%
   ggplot(aes(x = .pred_1, fill = is_canceled))+
   geom_density(alpha = 0.5, color = NA)
 ```
-a.We would have 2 peaks at 0 and 1 with 1 corresponding and the middle parts would be close to 0.
-b.We lower the cutoff because the specificity is higher than sensitivity
+
+a. We would have 2 peaks at 0 and 1 with 1 corresponding and the middle parts would be close to 0.
+
+b. We lower the cutoff because the specificity is higher than sensitivity
+
 c. It will go down, since we will be making more is_cancelled = true predictions. False positives would increase and so, true negatives would increase. 
 
 8. Let's say that this model is going to be applied to bookings 14 days in advance of their arrival at each hotel, and someone who works for the hotel will make a phone call to the person who made the booking. During this phone call, they will try to assure that the person will be keeping their reservation or that they will be canceling in which case they can do that now and still have time to fill the room. How should the hotel go about deciding who to call? How could they measure whether it was worth the effort to do the calling? Can you think of another way they might use the model? 
 
 By the variable importance plot we did earlier, the hotel should probably call people who have reserved room type p, made non refundable deposits or assigned room type I (in order of importance) since they are more likely to be someone who is willing to cancel. 
+
 To measure if it was worth the effort of calling you could maybe develop a metric which involves the probability of cancellation of that booking, the price of the room (how much the hotel could possibly saving by minimizing cancellations) and the waiting list of the hotel.
+
 They might be able to use the model to do overbooking similar to airlines but this could be more problematic since there might not be a large supply of alternative rooms in the area similar to a large supply of alternative flights that airlines could provide.
 
 9. How might you go about questioning and evaluating the model in terms of fairness? Are there any questions you would like to ask of the people who collected the data? 
 
-country bias could be something to consider since that is a variable in the dataset. The model could give questionable results due to issues such as questionable sample sizes from certain countries and this might lead to some sort of discriminatory practice. 
+Country bias could be something to consider since that is a variable in the dataset. The model could give questionable results due to issues such as questionable sample sizes from certain countries and this might lead to some sort of discriminatory practice. 
 
 You would have to make sure that the calling to cancel bookings do not have socioeconomic or racial bias hidden in variables such as reserved_room_type and deposit_type. 
 
